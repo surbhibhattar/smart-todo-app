@@ -8,6 +8,7 @@ const {
   updateTodo,
   deleteTodo,
   deleteAllTodos,
+  reorderTodos
 } = require("../controllers/todo.controller");
 
 router.post("/", createTodo);
@@ -16,5 +17,6 @@ router.get("/:id", getTodo);
 router.put("/:id", updateTodo);
 router.delete("/:id", deleteTodo);
 router.delete("/", deleteAllTodos);
+router.patch("/reorder", reorderTodos);
 
 module.exports = router;

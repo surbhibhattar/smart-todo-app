@@ -4,8 +4,15 @@ const Todo = require("../models/Todo");
 // ✅ Create Todo
 exports.createTodo = async (req, res) => {
   try {
-    const todo = await Todo.create(req.body);
-    res.status(201).json(todo);
+    const { title, category, dueDate } = req.body;
+
+    const todo = await Todo.create({
+      title,
+      category,
+      dueDate,
+    });
+
+    res.json(todo);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -89,6 +96,25 @@ exports.deleteAllTodos = async (req, res) => {
   try {
     await Todo.deleteMany();
     res.json({ message: "All todos deleted" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.reorderTodos = async (req, res) => {
+  try {
+    const { todos } = req.body;
+
+    const bulkOps = todos.map((t) => ({
+      updateOne: {
+        filter: { _id: t.id },
+        update: { order: t.order },
+      },
+    }));
+
+    await Todo.bulkWrite(bulkOps);
+
+    res.json({ message: "Order updated" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
